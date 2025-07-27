@@ -18,8 +18,8 @@ export default function Browse() {
   const searchFromUrl = urlParams.get('search') || '';
 
   const [searchQuery, setSearchQuery] = useState(searchFromUrl);
-  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl);
-  const [priceRange, setPriceRange] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || 'all');
+  const [priceRange, setPriceRange] = useState<string>('any');
 
   const { data: listings, isLoading } = useQuery<Listing[]>({
     queryKey: ['/api/listings'],
@@ -30,10 +30,10 @@ export default function Browse() {
       listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       listing.description.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const matchesCategory = !selectedCategory || 
+    const matchesCategory = !selectedCategory || selectedCategory === 'all' ||
       listing.category.toLowerCase() === selectedCategory.toLowerCase();
     
-    const matchesPrice = !priceRange || (() => {
+    const matchesPrice = !priceRange || priceRange === 'any' || (() => {
       switch (priceRange) {
         case 'under-50':
           return listing.price < 50;
@@ -53,8 +53,8 @@ export default function Browse() {
 
   const clearFilters = () => {
     setSearchQuery('');
-    setSelectedCategory('');
-    setPriceRange('');
+    setSelectedCategory('all');
+    setPriceRange('any');
   };
 
   if (isLoading) {
@@ -114,7 +114,7 @@ export default function Browse() {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="textbooks">Textbooks</SelectItem>
                 <SelectItem value="electronics">Electronics</SelectItem>
                 <SelectItem value="notes">Study Notes</SelectItem>
@@ -127,7 +127,7 @@ export default function Browse() {
                 <SelectValue placeholder="Price Range" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Price</SelectItem>
+                <SelectItem value="any">Any Price</SelectItem>
                 <SelectItem value="under-50">Under $50</SelectItem>
                 <SelectItem value="50-100">$50 - $100</SelectItem>
                 <SelectItem value="100-500">$100 - $500</SelectItem>
@@ -135,7 +135,7 @@ export default function Browse() {
               </SelectContent>
             </Select>
             
-            {(searchQuery || selectedCategory || priceRange) && (
+            {(searchQuery || (selectedCategory && selectedCategory !== 'all') || (priceRange && priceRange !== 'any')) && (
               <Button variant="outline" onClick={clearFilters}>
                 <Filter className="mr-2" size={16} />
                 Clear
@@ -161,7 +161,7 @@ export default function Browse() {
           <div className="text-center py-12">
             <h3 className="text-lg font-semibold mb-2">No items found</h3>
             <p className="text-gray-600 mb-4">
-              {searchQuery || selectedCategory || priceRange 
+              {searchQuery || (selectedCategory && selectedCategory !== 'all') || (priceRange && priceRange !== 'any')
                 ? "Try adjusting your filters or search terms"
                 : "Be the first to post an item!"
               }
