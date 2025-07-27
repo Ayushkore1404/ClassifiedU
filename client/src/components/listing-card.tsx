@@ -44,11 +44,12 @@ export default function ListingCard({ listing, onClick }: ListingCardProps) {
   const imageUrl = listing.images?.[0] || getImageForCategory(listing.category);
   
   return (
-    <Card className="vibrant-card hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden group transform hover:-translate-y-2" onClick={onClick}>
-      <div className="relative overflow-hidden">
+    <Card className="vibrant-card hover:shadow-2xl transition-all duration-300 cursor-pointer overflow-hidden group transform hover:-translate-y-2 gpu-acceleration" onClick={onClick}>
+      <div className="relative overflow-hidden aspect-ratio-4-3">
         <img
           src={imageUrl}
           alt={listing.title}
+          loading="lazy"
           className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
