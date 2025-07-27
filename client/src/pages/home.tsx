@@ -16,11 +16,11 @@ function CreateListingCTA() {
           Join thousands of students already using ClassifiedU to buy, sell, and connect with their campus community.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button asChild size="lg" className="bg-white text-secondary hover:bg-gray-100 hover:text-secondary">
-            <Link href="/sell">Create Listing</Link>
+          <Button asChild size="lg" className="bg-white text-secondary hover:bg-gray-100 hover:text-secondary font-semibold">
+            <Link href="/sell"><span className="text-secondary">Create Listing</span></Link>
           </Button>
-          <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-secondary">
-            <Link href="/roommates">Join as Roommate</Link>
+          <Button asChild size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-secondary font-semibold">
+            <Link href="/roommates"><span className="text-white hover:text-secondary">Join as Roommate</span></Link>
           </Button>
         </div>
       </div>
@@ -46,7 +46,7 @@ function StatsSection() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {stats.map((stat, index) => (
             <div key={stat.label} className="transform hover:scale-105 transition-transform duration-300">
-              <div className="text-5xl font-bold mb-3 text-orange-300">{stat.value}</div>
+              <div className="text-5xl font-bold mb-3 text-purple-300">{stat.value}</div>
               <div className="text-white/80 font-medium">{stat.label}</div>
             </div>
           ))}

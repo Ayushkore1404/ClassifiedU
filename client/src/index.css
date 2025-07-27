@@ -15,7 +15,7 @@
   --input: hsl(210, 11%, 90%);
   --primary: hsl(207, 90%, 42%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(19, 95%, 62%);
+  --secondary: hsl(285, 85%, 55%);
   --secondary-foreground: hsl(0, 0%, 100%);
   --accent: hsl(210, 11%, 96%);
   --accent-foreground: hsl(210, 11%, 13%);
@@ -40,7 +40,7 @@
   --input: hsl(240, 4%, 16%);
   --primary: hsl(207, 90%, 42%);
   --primary-foreground: hsl(0, 0%, 100%);
-  --secondary: hsl(19, 95%, 62%);
+  --secondary: hsl(285, 85%, 55%);
   --secondary-foreground: hsl(0, 0%, 100%);
   --accent: hsl(240, 4%, 16%);  
   --accent-foreground: hsl(0, 0%, 98%);
@@ -65,7 +65,7 @@
 
 @layer components {
   .hero-gradient {
-    background: linear-gradient(135deg, #1976D2 0%, #1E88E5 25%, #42A5F5 50%, #FF7043 75%, #FFAB40 100%);
+    background: linear-gradient(135deg, #1976D2 0%, #1E88E5 25%, #42A5F5 50%, #8E44AD 75%, #A569BD 100%);
     position: relative;
   }
   
@@ -81,7 +81,7 @@
   }
   
   .secondary-gradient {
-    background: linear-gradient(45deg, #FF7043 0%, #FFAB40 50%, #66BB6A 100%);
+    background: linear-gradient(45deg, #8E44AD 0%, #A569BD 50%, #3498DB 100%);
   }
   
   .university-bg {

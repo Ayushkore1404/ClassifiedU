@@ -44,7 +44,7 @@ export default function UniversityIllustration({ className = "" }: UniversityIll
         
         {/* Clock tower */}
         <rect x="230" y="150" width="40" height="50" fill="url(#buildingGradient)" stroke="#E5E7EB" strokeWidth="2"/>
-        <circle cx="250" cy="175" r="15" fill="#FF7043" opacity="0.8"/>
+        <circle cx="250" cy="175" r="15" fill="#8E44AD" opacity="0.8"/>
         <circle cx="250" cy="175" r="2" fill="#FFF"/>
         <line x1="250" y1="175" x2="250" y2="165" stroke="#FFF" strokeWidth="2"/>
         <line x1="250" y1="175" x2="258" y2="175" stroke="#FFF" strokeWidth="2"/>
@@ -60,7 +60,7 @@ export default function UniversityIllustration({ className = "" }: UniversityIll
         <rect x="416" y="290" width="8" height="35" fill="#8B4513"/>
         
         {/* Students walking */}
-        <circle cx="100" cy="320" r="8" fill="#FBBF24"/>
+        <circle cx="100" cy="320" r="8" fill="#16A085"/>
         <rect x="96" y="320" width="8" height="20" fill="#3B82F6"/>
         <rect x="94" y="340" width="4" height="10" fill="#1F2937"/>
         <rect x="102" y="340" width="4" height="10" fill="#1F2937"/>
@@ -71,15 +71,15 @@ export default function UniversityIllustration({ className = "" }: UniversityIll
         <rect x="132" y="345" width="4" height="10" fill="#1F2937"/>
         
         {/* Books floating */}
-        <rect x="50" y="150" width="20" height="15" fill="#FF7043" opacity="0.8" transform="rotate(15 60 157.5)"/>
-        <rect x="400" y="160" width="25" height="18" fill="#1976D2" opacity="0.8" transform="rotate(-20 412.5 169)"/>
+        <rect x="50" y="150" width="20" height="15" fill="#16A085" opacity="0.8" transform="rotate(15 60 157.5)"/>
+        <rect x="400" y="160" width="25" height="18" fill="#8E44AD" opacity="0.8" transform="rotate(-20 412.5 169)"/>
         
         {/* Graduation caps floating */}
         <polygon points="450,100 460,95 470,100 465,105" fill="#1F2937" opacity="0.7"/>
-        <circle cx="465" cy="100" r="2" fill="#FBBF24"/>
+        <circle cx="465" cy="100" r="2" fill="#16A085"/>
         
         <polygon points="30,120 40,115 50,120 45,125" fill="#1F2937" opacity="0.7"/>
-        <circle cx="45" cy="120" r="2" fill="#FBBF24"/>
+        <circle cx="45" cy="120" r="2" fill="#8E44AD"/>
         
         {/* Clouds */}
         <ellipse cx="100" cy="80" rx="25" ry="15" fill="#FFF" opacity="0.8"/>

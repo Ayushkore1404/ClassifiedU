@@ -34,7 +34,7 @@ export default function RoommateFinderSection() {
 
   if (isLoading) {
     return (
-      <section className="py-20 bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
+      <section className="py-20 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6 text-gray-800">Find Your Perfect Roommate</h2>
@@ -77,7 +77,7 @@ export default function RoommateFinderSection() {
   const featuredProfiles = profiles?.slice(0, 2) || [];
 
   return (
-    <section className="py-20 bg-gradient-to-br from-orange-50 via-red-50 to-pink-50">
+    <section className="py-20 bg-gradient-to-br from-purple-50 via-indigo-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-6 text-gray-800">Find Your Perfect Roommate</h2>

@@ -18,10 +18,10 @@ export default function HeroSection() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary font-semibold px-8 py-4 rounded-xl shadow-lg">
-                <Link href="/browse">Start Browsing</Link>
+                <Link href="/browse"><span className="text-primary">Start Browsing</span></Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white hover:text-primary font-semibold px-8 py-4 rounded-xl">
-                <Link href="/sell">Post Your First Item</Link>
+              <Button asChild size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary font-semibold px-8 py-4 rounded-xl">
+                <Link href="/sell"><span className="text-white hover:text-primary">Post Your First Item</span></Link>
               </Button>
             </div>
           </div>
@@ -44,8 +44,8 @@ export default function HeroSection() {
             </div>
             
             {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-orange-400 rounded-full opacity-80 animate-pulse"></div>
-            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-green-400 rounded-full opacity-70 animate-bounce"></div>
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-purple-400 rounded-full opacity-80 animate-pulse"></div>
+            <div className="absolute -bottom-6 -left-6 w-16 h-16 bg-teal-400 rounded-full opacity-70 animate-bounce"></div>
           </div>
         </div>
       </div>
