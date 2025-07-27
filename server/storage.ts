@@ -63,7 +63,11 @@ export class MemStorage implements IStorage {
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = randomUUID();
     const user: User = { 
-      ...insertUser, 
+      ...insertUser,
+      major: insertUser.major || null,
+      year: insertUser.year || null,
+      bio: insertUser.bio || null,
+      avatar: insertUser.avatar || null,
       id, 
       createdAt: new Date() 
     };
@@ -108,7 +112,9 @@ export class MemStorage implements IStorage {
   async createListing(insertListing: InsertListing & { userId: string }): Promise<Listing> {
     const id = randomUUID();
     const listing: Listing = { 
-      ...insertListing, 
+      ...insertListing,
+      images: insertListing.images || null,
+      isActive: insertListing.isActive ?? true,
       id, 
       createdAt: new Date() 
     };
@@ -145,7 +151,13 @@ export class MemStorage implements IStorage {
   async createRoommateProfile(insertProfile: InsertRoommateProfile & { userId: string }): Promise<RoommateProfile> {
     const id = randomUUID();
     const profile: RoommateProfile = { 
-      ...insertProfile, 
+      ...insertProfile,
+      preferences: insertProfile.preferences || null,
+      budget: insertProfile.budget || null,
+      moveInDate: insertProfile.moveInDate || null,
+      location: insertProfile.location || null,
+      contactInfo: insertProfile.contactInfo || null,
+      isActive: insertProfile.isActive ?? true,
       id, 
       createdAt: new Date() 
     };
@@ -185,7 +197,8 @@ export class MemStorage implements IStorage {
   async createMessage(insertMessage: InsertMessage): Promise<Message> {
     const id = randomUUID();
     const message: Message = { 
-      ...insertMessage, 
+      ...insertMessage,
+      isRead: insertMessage.isRead ?? false,
       id, 
       createdAt: new Date() 
     };

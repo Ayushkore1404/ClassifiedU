@@ -11,12 +11,12 @@ export default function FeaturedListings() {
 
   if (isLoading) {
     return (
-      <section className="py-16 bg-muted">
+      <section className="py-20 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold">Featured Listings</h2>
-            <Link href="/browse" className="text-primary font-semibold hover:underline">
-              View All
+          <div className="flex justify-between items-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-800">Featured Listings</h2>
+            <Link href="/browse" className="text-primary font-semibold hover:underline text-lg">
+              View All →
             </Link>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -40,12 +40,12 @@ export default function FeaturedListings() {
   const featuredListings = listings?.slice(0, 4) || [];
 
   return (
-    <section className="py-16 bg-muted">
+    <section className="py-20 bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-12">
-          <h2 className="text-3xl font-bold">Featured Listings</h2>
-          <Link href="/browse" className="text-primary font-semibold hover:underline">
-            View All
+        <div className="flex justify-between items-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-800">Featured Listings</h2>
+          <Link href="/browse" className="text-primary font-semibold hover:underline text-lg">
+            View All →
           </Link>
         </div>
         

@@ -4,9 +4,10 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { GraduationCap, Search, Plus, Bell, MessageCircle, Menu, User, LogOut } from "lucide-react";
+import { Search, Plus, Bell, MessageCircle, Menu, User, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 import { useState } from "react";
+import Logo from "@/components/logo";
 
 export default function Navbar() {
   const [, setLocation] = useLocation();
@@ -32,7 +33,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
-              <GraduationCap className="text-white" size={20} />
+              <Logo size={20} className="text-white" />
             </div>
             <span className="text-2xl font-bold text-primary">ClassifiedU</span>
           </Link>

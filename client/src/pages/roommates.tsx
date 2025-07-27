@@ -246,7 +246,8 @@ export default function Roommates() {
                                 type="number" 
                                 placeholder="800"
                                 {...field}
-                                onChange={(e) => field.onChange(Number(e.target.value))}
+                                value={field.value || ""}
+                                onChange={(e) => field.onChange(Number(e.target.value) || null)}
                               />
                             </FormControl>
                             <FormMessage />
@@ -264,6 +265,7 @@ export default function Roommates() {
                               <Input 
                                 type="date"
                                 {...field}
+                                value={field.value || ""}
                               />
                             </FormControl>
                             <FormMessage />
@@ -279,7 +281,7 @@ export default function Roommates() {
                         <FormItem>
                           <FormLabel>Preferred Location</FormLabel>
                           <FormControl>
-                            <Input placeholder="Near campus, downtown, etc." {...field} />
+                            <Input placeholder="Near campus, downtown, etc." {...field} value={field.value || ""} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -293,7 +295,7 @@ export default function Roommates() {
                         <FormItem>
                           <FormLabel>Contact Information</FormLabel>
                           <FormControl>
-                            <Input placeholder="Email or phone number" {...field} />
+                            <Input placeholder="Email or phone number" {...field} value={field.value || ""} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

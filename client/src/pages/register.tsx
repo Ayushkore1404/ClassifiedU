@@ -203,7 +203,7 @@ export default function Register() {
                     <FormItem>
                       <FormLabel>Major</FormLabel>
                       <FormControl>
-                        <Input placeholder="Computer Science" {...field} />
+                        <Input placeholder="Computer Science" {...field} value={field.value || ""} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -216,7 +216,7 @@ export default function Register() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Year</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} defaultValue={field.value || ""}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select year" />
