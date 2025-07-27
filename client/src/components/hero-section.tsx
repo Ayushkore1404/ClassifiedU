@@ -17,11 +17,11 @@ export default function HeroSection() {
               All within your university community.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button asChild size="lg" className="bg-white text-primary hover:bg-gray-100 hover:text-primary font-semibold px-8 py-4 rounded-xl shadow-lg">
-                <Link href="/browse"><span className="text-primary">Start Browsing</span></Link>
+              <Button asChild size="lg" variant="white" className="font-semibold px-8 py-4 rounded-xl shadow-lg">
+                <Link href="/browse">Start Browsing</Link>
               </Button>
-              <Button asChild size="lg" className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary font-semibold px-8 py-4 rounded-xl">
-                <Link href="/sell"><span className="text-white hover:text-primary">Post Your First Item</span></Link>
+              <Button asChild size="lg" variant="transparent" className="font-semibold px-8 py-4 rounded-xl">
+                <Link href="/sell">Post Your First Item</Link>
               </Button>
             </div>
           </div>

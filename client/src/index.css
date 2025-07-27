@@ -69,6 +69,19 @@
     position: relative;
   }
   
+  /* Enhanced button text visibility */
+  .btn-text-primary {
+    color: hsl(207, 90%, 42%) !important;
+  }
+  
+  .btn-text-white {
+    color: white !important;
+  }
+  
+  .btn-text-white:hover {
+    color: hsl(207, 90%, 42%) !important;
+  }
+  
   .hero-gradient::before {
     content: '';
     position: absolute;
