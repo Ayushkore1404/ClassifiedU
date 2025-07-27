@@ -17,13 +17,13 @@ const mockImages = {
 const getCategoryColor = (category: string) => {
   switch (category.toLowerCase()) {
     case 'textbooks':
-      return 'bg-primary';
+      return 'bg-indigo-500';
     case 'electronics':
-      return 'bg-secondary';
+      return 'bg-cyan-500';
     case 'notes':
-      return 'bg-success';
+      return 'bg-emerald-500';
     default:
-      return 'bg-gray-500';
+      return 'bg-slate-500';
   }
 };
 
@@ -54,14 +54,14 @@ export default function ListingCard({ listing, onClick }: ListingCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       <CardContent className="p-6">
-        <h3 className="font-bold text-lg mb-3 line-clamp-2 text-gray-800">{listing.title}</h3>
+        <h3 className="font-bold text-lg mb-3 line-clamp-2 text-foreground">{listing.title}</h3>
         <p className="text-3xl font-bold text-primary mb-3">${listing.price}</p>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">{listing.description}</p>
+        <p className="text-muted-foreground text-sm mb-4 line-clamp-2 leading-relaxed">{listing.description}</p>
         <div className="flex items-center justify-between">
           <Badge className={`${getCategoryColor(listing.category)} text-white text-xs px-3 py-1 rounded-full font-medium`}>
             {listing.category}
           </Badge>
-          <span className="text-xs text-gray-500 font-medium">{listing.university}</span>
+          <span className="text-xs text-muted-foreground font-medium">{listing.university}</span>
         </div>
       </CardContent>
     </Card>

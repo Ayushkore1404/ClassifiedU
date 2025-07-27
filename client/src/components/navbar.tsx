@@ -8,6 +8,7 @@ import { Search, Plus, Bell, MessageCircle, Menu, User, LogOut } from "lucide-re
 import { useAuth } from "@/contexts/auth-context";
 import { useState } from "react";
 import Logo from "@/components/logo";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Navbar() {
   const [, setLocation] = useLocation();
@@ -27,7 +28,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-background border-b shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -54,15 +55,17 @@ export default function Navbar() {
 
           {/* Navigation Links - Hidden on mobile */}
           <div className="hidden md:flex items-center space-x-6">
-            <Link href="/browse" className="text-gray-700 hover:text-primary font-medium">
+            <Link href="/browse" className="text-foreground/70 hover:text-primary font-medium transition-colors">
               Browse
             </Link>
-            <Link href="/sell" className="text-gray-700 hover:text-primary font-medium">
+            <Link href="/sell" className="text-foreground/70 hover:text-primary font-medium transition-colors">
               Sell
             </Link>
-            <Link href="/roommates" className="text-gray-700 hover:text-primary font-medium">
+            <Link href="/roommates" className="text-foreground/70 hover:text-primary font-medium transition-colors">
               Roommates
             </Link>
+            
+            <ThemeToggle />
             
             {user ? (
               <>
@@ -74,8 +77,8 @@ export default function Navbar() {
                 </Button>
                 
                 <div className="flex items-center space-x-3">
-                  <Bell className="text-gray-600 cursor-pointer hover:text-primary" size={20} />
-                  <MessageCircle className="text-gray-600 cursor-pointer hover:text-primary" size={20} />
+                  <Bell className="text-foreground/60 cursor-pointer hover:text-primary transition-colors" size={20} />
+                  <MessageCircle className="text-foreground/60 cursor-pointer hover:text-primary transition-colors" size={20} />
                   
                   <DropdownMenu>
                     <DropdownMenuTrigger>
