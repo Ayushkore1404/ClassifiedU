@@ -12,6 +12,13 @@ ClassifiedU is a full-stack web application designed as a marketplace for colleg
 - Confirmed Express server runs on port 5000 with API endpoints responding correctly
 - Project is now ready for continued development in the Replit environment
 
+### Database Integration (July 27, 2025)
+- Created PostgreSQL database using Replit's database service
+- Implemented database connection layer using Neon serverless PostgreSQL driver
+- Replaced in-memory storage with DatabaseStorage class using Drizzle ORM
+- Successfully pushed database schema with all tables (users, listings, roommate_profiles, messages)
+- All API endpoints now persist data to PostgreSQL instead of memory
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
@@ -30,7 +37,7 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: Express.js with TypeScript for API development
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
 - **Database Provider**: Neon Database (serverless PostgreSQL)
-- **Session Management**: In-memory storage for development (can be extended with Redis)
+- **Session Management**: PostgreSQL database storage with Drizzle ORM
 - **API Design**: RESTful API with consistent error handling and logging
 
 ### Monorepo Structure

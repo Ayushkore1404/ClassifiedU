@@ -1,5 +1,7 @@
-import { type User, type InsertUser, type Listing, type InsertListing, type RoommateProfile, type InsertRoommateProfile, type Message, type InsertMessage } from "@shared/schema";
+import { type User, type InsertUser, type Listing, type InsertListing, type RoommateProfile, type InsertRoommateProfile, type Message, type InsertMessage, users, listings, roommateProfiles, messages } from "@shared/schema";
 import { randomUUID } from "crypto";
+import { db } from "./db";
+import { eq, and, or } from "drizzle-orm";
 
 export interface IStorage {
   // User methods
@@ -216,4 +218,156 @@ export class MemStorage implements IStorage {
   }
 }
 
-export const storage = new MemStorage();
+export class DatabaseStorage implements IStorage {
+  // User methods
+  async getUser(id: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+    return user || undefined;
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
+    return user;
+  }
+
+  async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
+    const [user] = await db
+      .update(users)
+      .set(updates)
+      .where(eq(users.id, id))
+      .returning();
+    return user || undefined;
+  }
+
+  // Listing methods
+  async getAllListings(): Promise<Listing[]> {
+    return await db.select().from(listings).where(eq(listings.isActive, true));
+  }
+
+  async getListing(id: string): Promise<Listing | undefined> {
+    const [listing] = await db.select().from(listings).where(eq(listings.id, id));
+    return listing || undefined;
+  }
+
+  async getListingsByUser(userId: string): Promise<Listing[]> {
+    return await db.select().from(listings).where(eq(listings.userId, userId));
+  }
+
+  async getListingsByCategory(category: string): Promise<Listing[]> {
+    return await db.select().from(listings).where(
+      and(eq(listings.category, category), eq(listings.isActive, true))
+    );
+  }
+
+  async getListingsByUniversity(university: string): Promise<Listing[]> {
+    return await db.select().from(listings).where(
+      and(eq(listings.university, university), eq(listings.isActive, true))
+    );
+  }
+
+  async createListing(insertListing: InsertListing & { userId: string }): Promise<Listing> {
+    const [listing] = await db
+      .insert(listings)
+      .values(insertListing)
+      .returning();
+    return listing;
+  }
+
+  async updateListing(id: string, updates: Partial<Listing>): Promise<Listing | undefined> {
+    const [listing] = await db
+      .update(listings)
+      .set(updates)
+      .where(eq(listings.id, id))
+      .returning();
+    return listing || undefined;
+  }
+
+  async deleteListing(id: string): Promise<boolean> {
+    const result = await db.delete(listings).where(eq(listings.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Roommate methods
+  async getAllRoommateProfiles(): Promise<RoommateProfile[]> {
+    return await db.select().from(roommateProfiles).where(eq(roommateProfiles.isActive, true));
+  }
+
+  async getRoommateProfile(id: string): Promise<RoommateProfile | undefined> {
+    const [profile] = await db.select().from(roommateProfiles).where(eq(roommateProfiles.id, id));
+    return profile || undefined;
+  }
+
+  async getRoommateProfileByUser(userId: string): Promise<RoommateProfile | undefined> {
+    const [profile] = await db.select().from(roommateProfiles).where(eq(roommateProfiles.userId, userId));
+    return profile || undefined;
+  }
+
+  async createRoommateProfile(insertProfile: InsertRoommateProfile & { userId: string }): Promise<RoommateProfile> {
+    const [profile] = await db
+      .insert(roommateProfiles)
+      .values(insertProfile)
+      .returning();
+    return profile;
+  }
+
+  async updateRoommateProfile(id: string, updates: Partial<RoommateProfile>): Promise<RoommateProfile | undefined> {
+    const [profile] = await db
+      .update(roommateProfiles)
+      .set(updates)
+      .where(eq(roommateProfiles.id, id))
+      .returning();
+    return profile || undefined;
+  }
+
+  async deleteRoommateProfile(id: string): Promise<boolean> {
+    const result = await db.delete(roommateProfiles).where(eq(roommateProfiles.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+
+  // Message methods
+  async getMessages(userId: string): Promise<Message[]> {
+    return await db.select().from(messages).where(
+      or(eq(messages.senderId, userId), eq(messages.receiverId, userId))
+    );
+  }
+
+  async getConversation(userId1: string, userId2: string): Promise<Message[]> {
+    return await db.select().from(messages).where(
+      or(
+        and(eq(messages.senderId, userId1), eq(messages.receiverId, userId2)),
+        and(eq(messages.senderId, userId2), eq(messages.receiverId, userId1))
+      )
+    ).orderBy(messages.createdAt);
+  }
+
+  async createMessage(insertMessage: InsertMessage): Promise<Message> {
+    const [message] = await db
+      .insert(messages)
+      .values(insertMessage)
+      .returning();
+    return message;
+  }
+
+  async markMessageRead(id: string): Promise<boolean> {
+    const result = await db
+      .update(messages)
+      .set({ isRead: true })
+      .where(eq(messages.id, id));
+    return (result.rowCount ?? 0) > 0;
+  }
+}
+
+export const storage = new DatabaseStorage();
