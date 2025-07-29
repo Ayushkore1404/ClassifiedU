@@ -31,6 +31,6 @@ echo.
 echo Press Ctrl+C to stop the server when done.
 echo.
 
-cross-env NODE_ENV=development tsx server/index.ts
+set NODE_ENV=development && npx tsx server/index.ts
 
 pause

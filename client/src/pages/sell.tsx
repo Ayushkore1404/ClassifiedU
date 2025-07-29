@@ -12,9 +12,22 @@ import Footer from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Upload, DollarSign, Tag, MapPin } from "lucide-react";
 
 const listingFormSchema = insertListingSchema.extend({
@@ -35,7 +48,7 @@ export default function Sell() {
     defaultValues: {
       title: "",
       description: "",
-      price: 0,
+      price: undefined, // Changed from 0 to undefined to avoid type issues
       category: "",
       condition: "",
       images: [],
@@ -50,7 +63,7 @@ export default function Sell() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/listings'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/listings"] });
       toast({
         title: "Success!",
         description: "Your listing has been created.",
@@ -102,7 +115,9 @@ export default function Sell() {
         <Navbar />
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
           <h1 className="text-3xl font-bold mb-4">Login Required</h1>
-          <p className="text-gray-600 mb-8">Please log in to create a listing.</p>
+          <p className="text-gray-600 mb-8">
+            Please log in to create a listing.
+          </p>
           <Button asChild>
             <a href="/login">Go to Login</a>
           </Button>
@@ -115,17 +130,20 @@ export default function Sell() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card>
           <CardHeader>
             <CardTitle className="text-2xl">Create New Listing</CardTitle>
             <p className="text-gray-600">Sell your items to fellow students</p>
           </CardHeader>
-          
+
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <FormField
                   control={form.control}
                   name="title"
@@ -147,7 +165,7 @@ export default function Sell() {
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea 
+                        <Textarea
                           placeholder="Describe your item in detail..."
                           className="min-h-[100px]"
                           {...field}
@@ -167,13 +185,24 @@ export default function Sell() {
                         <FormLabel>Price</FormLabel>
                         <FormControl>
                           <div className="relative">
-                            <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                            <Input 
-                              type="number" 
-                              placeholder="0.00"
+                            <DollarSign
+                              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                              size={16}
+                            />
+                            <Input
+                              type="number"
+                              placeholder="0"
+                              min="0"
+                              step="1"
                               className="pl-10"
-                              {...field}
-                              onChange={(e) => field.onChange(Number(e.target.value))}
+                              value={field.value || ""}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Convert to integer, handle empty string
+                                field.onChange(
+                                  value === "" ? undefined : parseInt(value, 10)
+                                );
+                              }}
                             />
                           </div>
                         </FormControl>
@@ -188,7 +217,10 @@ export default function Sell() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
@@ -196,7 +228,9 @@ export default function Sell() {
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="textbooks">Textbooks</SelectItem>
-                            <SelectItem value="electronics">Electronics</SelectItem>
+                            <SelectItem value="electronics">
+                              Electronics
+                            </SelectItem>
                             <SelectItem value="notes">Study Notes</SelectItem>
                             <SelectItem value="furniture">Furniture</SelectItem>
                             <SelectItem value="clothing">Clothing</SelectItem>
@@ -215,7 +249,10 @@ export default function Sell() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Condition</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select condition" />
@@ -242,8 +279,11 @@ export default function Sell() {
                       <FormLabel>University</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                          <Input 
+                          <MapPin
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            size={16}
+                          />
+                          <Input
                             placeholder="Your university"
                             className="pl-10"
                             {...field}
@@ -256,18 +296,20 @@ export default function Sell() {
                 />
 
                 <div>
-                  <label className="block text-sm font-medium mb-2">Photos</label>
+                  <label className="block text-sm font-medium mb-2">
+                    Photos
+                  </label>
                   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                     {imagePreview ? (
                       <div className="space-y-4">
-                        <img 
-                          src={imagePreview} 
-                          alt="Preview" 
+                        <img
+                          src={imagePreview}
+                          alt="Preview"
                           className="mx-auto max-h-48 rounded-lg"
                         />
-                        <Button 
-                          type="button" 
-                          variant="outline" 
+                        <Button
+                          type="button"
+                          variant="outline"
                           onClick={() => {
                             setImagePreview("");
                             form.setValue("images", []);
@@ -278,9 +320,16 @@ export default function Sell() {
                       </div>
                     ) : (
                       <div>
-                        <Upload className="mx-auto mb-4 text-gray-400" size={48} />
-                        <p className="text-gray-600 mb-2">Click to upload photos</p>
-                        <p className="text-sm text-gray-500">PNG, JPG up to 10MB</p>
+                        <Upload
+                          className="mx-auto mb-4 text-gray-400"
+                          size={48}
+                        />
+                        <p className="text-gray-600 mb-2">
+                          Click to upload photos
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          PNG, JPG up to 10MB
+                        </p>
                       </div>
                     )}
                     <input
@@ -292,19 +341,21 @@ export default function Sell() {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full" 
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={createListingMutation.isPending}
                 >
-                  {createListingMutation.isPending ? "Creating..." : "Create Listing"}
+                  {createListingMutation.isPending
+                    ? "Creating..."
+                    : "Create Listing"}
                 </Button>
               </form>
             </Form>
           </CardContent>
         </Card>
       </div>
-      
+
       <Footer />
     </div>
   );
