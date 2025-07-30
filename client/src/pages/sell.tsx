@@ -151,7 +151,11 @@ export default function Sell() {
                     <FormItem>
                       <FormLabel>Title</FormLabel>
                       <FormControl>
-                        <Input placeholder="What are you selling?" {...field} />
+                        <Input
+                          type="text"
+                          placeholder="What are you selling?"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -273,22 +277,50 @@ export default function Sell() {
 
                 <FormField
                   control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <div className="relative">
+                          <DollarSign
+                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                            size={16}
+                          />
+                          <Input
+                            type="number"
+                            placeholder="0.00"
+                            min="0"
+                            step="0.01"
+                            className="pl-10"
+                            {...field}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              field.onChange(
+                                value ? parseFloat(value) : undefined
+                              );
+                            }}
+                            value={field.value || ""}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
                   name="university"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>University</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <MapPin
-                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                            size={16}
-                          />
-                          <Input
-                            placeholder="Your university"
-                            className="pl-10"
-                            {...field}
-                          />
-                        </div>
+                        <Input
+                          type="text"
+                          placeholder="Your university"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

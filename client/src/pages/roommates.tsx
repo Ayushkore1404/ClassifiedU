@@ -2,7 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { RoommateProfile, User, insertRoommateProfileSchema, InsertRoommateProfile } from "@shared/schema";
+import {
+  RoommateProfile,
+  User,
+  insertRoommateProfileSchema,
+  InsertRoommateProfile,
+} from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import { useAuth } from "@/contexts/auth-context";
 import { useToast } from "@/hooks/use-toast";
@@ -13,8 +18,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 import { RoommateCardSkeleton } from "@/components/loading-skeleton";
 import { Plus, Users, Search, X } from "lucide-react";
@@ -32,12 +50,14 @@ export default function Roommates() {
   const [currentPreferences, setCurrentPreferences] = useState<string[]>([]);
   const [newPreference, setNewPreference] = useState("");
 
-  const { data: profiles, isLoading: profilesLoading } = useQuery<RoommateProfile[]>({
-    queryKey: ['/api/roommates'],
+  const { data: profiles, isLoading: profilesLoading } = useQuery<
+    RoommateProfile[]
+  >({
+    queryKey: ["/api/roommates"],
   });
 
   const { data: userProfile } = useQuery<RoommateProfile>({
-    queryKey: ['/api/users', user?.id, 'roommate'],
+    queryKey: ["/api/users", user?.id, "roommate"],
     enabled: !!user,
   });
 
@@ -47,7 +67,7 @@ export default function Roommates() {
       title: "",
       description: "",
       preferences: [],
-      budget: 0,
+      budget: undefined,
       moveInDate: "",
       location: "",
       contactInfo: "",
@@ -61,8 +81,10 @@ export default function Roommates() {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/roommates'] });
-      queryClient.invalidateQueries({ queryKey: ['/api/users', user?.id, 'roommate'] });
+      queryClient.invalidateQueries({ queryKey: ["/api/roommates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/users", user?.id, "roommate"],
+      });
       toast({
         title: "Success!",
         description: "Your roommate profile has been created.",
@@ -72,9 +94,23 @@ export default function Roommates() {
       setCurrentPreferences([]);
     },
     onError: (error: Error) => {
+      console.error("Profile creation error:", error);
+      let errorMessage = "Failed to create profile. Please try again.";
+
+      // Handle specific error cases
+      if (error.message.includes("duplicate")) {
+        errorMessage =
+          "You already have a roommate profile. Please edit your existing profile instead.";
+      } else if (error.message.includes("validation")) {
+        errorMessage = "Please check your form data and try again.";
+      } else if (error.message.includes("network")) {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      }
+
       toast({
-        title: "Error",
-        description: error.message,
+        title: "Error Creating Profile",
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -96,7 +132,10 @@ export default function Roommates() {
   };
 
   const addPreference = () => {
-    if (newPreference.trim() && !currentPreferences.includes(newPreference.trim())) {
+    if (
+      newPreference.trim() &&
+      !currentPreferences.includes(newPreference.trim())
+    ) {
       const updatedPreferences = [...currentPreferences, newPreference.trim()];
       setCurrentPreferences(updatedPreferences);
       form.setValue("preferences", updatedPreferences);
@@ -105,7 +144,7 @@ export default function Roommates() {
   };
 
   const removePreference = (pref: string) => {
-    const updatedPreferences = currentPreferences.filter(p => p !== pref);
+    const updatedPreferences = currentPreferences.filter((p) => p !== pref);
     setCurrentPreferences(updatedPreferences);
     form.setValue("preferences", updatedPreferences);
   };
@@ -114,7 +153,46 @@ export default function Roommates() {
     if (!user) {
       toast({
         title: "Login Required",
-        description: "Please log in to create a profile.",
+        description: "Please log in to create a roommate profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Frontend validation
+    if (!data.title?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide a title for your profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!data.description?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide a description for your profile.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!data.contactInfo?.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide contact information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(data.contactInfo)) {
+      toast({
+        title: "Validation Error",
+        description: "Please provide a valid email address.",
         variant: "destructive",
       });
       return;
@@ -122,28 +200,33 @@ export default function Roommates() {
 
     createProfileMutation.mutate({
       ...data,
-      preferences: currentPreferences,
       userId: user.id,
     });
   };
 
-  const filteredProfiles = profiles?.filter(profile => {
-    if (!searchQuery) return true;
-    return profile.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           profile.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           profile.location?.toLowerCase().includes(searchQuery.toLowerCase());
-  }) || [];
+  const filteredProfiles =
+    profiles?.filter((profile) => {
+      if (!searchQuery) return true;
+      return (
+        profile.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        profile.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        profile.location?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }) || [];
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold mb-4">Find Your Perfect Roommate</h1>
+          <h1 className="text-4xl font-bold mb-4">
+            Find Your Perfect Roommate
+          </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Connect with compatible students in your area. Create a profile and find someone who shares your lifestyle and study habits.
+            Connect with compatible students in your area. Create a profile and
+            find someone who shares your lifestyle and study habits.
           </p>
         </div>
 
@@ -157,11 +240,17 @@ export default function Roommates() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+            <Search
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={16}
+            />
           </div>
-          
+
           {user && !userProfile && (
-            <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+            <Dialog
+              open={isCreateDialogOpen}
+              onOpenChange={setIsCreateDialogOpen}
+            >
               <DialogTrigger asChild>
                 <Button>
                   <Plus className="mr-2" size={16} />
@@ -172,49 +261,25 @@ export default function Roommates() {
                 <DialogHeader>
                   <DialogTitle>Create Roommate Profile</DialogTitle>
                 </DialogHeader>
-                
+
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                      control={form.control}
-                      name="title"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Profile Title</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Looking for a clean, quiet roommate..." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>About You</FormLabel>
-                          <FormControl>
-                            <Textarea 
-                              placeholder="Tell potential roommates about yourself, your habits, and what you're looking for..."
-                              className="min-h-[100px]"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
                     <div>
-                      <label className="block text-sm font-medium mb-2">Preferences</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Preferences
+                      </label>
                       <div className="flex gap-2 mb-2">
                         <Input
                           placeholder="Add a preference (e.g., Non-smoker, Clean, Quiet)"
                           value={newPreference}
                           onChange={(e) => setNewPreference(e.target.value)}
-                          onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addPreference())}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" &&
+                            (e.preventDefault(), addPreference())
+                          }
                         />
                         <Button type="button" onClick={addPreference} size="sm">
                           Add
@@ -222,11 +287,15 @@ export default function Roommates() {
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {currentPreferences.map((pref) => (
-                          <Badge key={pref} variant="secondary" className="flex items-center gap-1">
+                          <Badge
+                            key={pref}
+                            variant="secondary"
+                            className="flex items-center gap-1"
+                          >
                             {pref}
-                            <X 
-                              size={12} 
-                              className="cursor-pointer hover:text-red-500" 
+                            <X
+                              size={12}
+                              className="cursor-pointer hover:text-red-500"
                               onClick={() => removePreference(pref)}
                             />
                           </Badge>
@@ -242,12 +311,14 @@ export default function Roommates() {
                           <FormItem>
                             <FormLabel>Budget (per month)</FormLabel>
                             <FormControl>
-                              <Input 
-                                type="number" 
+                              <Input
+                                type="number"
                                 placeholder="800"
                                 {...field}
                                 value={field.value || ""}
-                                onChange={(e) => field.onChange(Number(e.target.value) || null)}
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value) || null)
+                                }
                               />
                             </FormControl>
                             <FormMessage />
@@ -262,7 +333,7 @@ export default function Roommates() {
                           <FormItem>
                             <FormLabel>Move-in Date</FormLabel>
                             <FormControl>
-                              <Input 
+                              <Input
                                 type="date"
                                 {...field}
                                 value={field.value || ""}
@@ -281,7 +352,11 @@ export default function Roommates() {
                         <FormItem>
                           <FormLabel>Preferred Location</FormLabel>
                           <FormControl>
-                            <Input placeholder="Near campus, downtown, etc." {...field} value={field.value || ""} />
+                            <Input
+                              placeholder="Near campus, downtown, etc."
+                              {...field}
+                              value={field.value || ""}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -293,21 +368,37 @@ export default function Roommates() {
                       name="contactInfo"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Contact Information</FormLabel>
+                          <FormLabel>Contact Information *</FormLabel>
                           <FormControl>
-                            <Input placeholder="Email or phone number" {...field} value={field.value || ""} />
+                            <Input
+                              type="email"
+                              placeholder="your.email@university.edu"
+                              aria-describedby="contact-description"
+                              required
+                              {...field}
+                              value={field.value || ""}
+                            />
                           </FormControl>
+                          <p
+                            id="contact-description"
+                            className="text-sm text-gray-500 mt-1"
+                          >
+                            Provide a valid email address for potential
+                            roommates to contact you
+                          </p>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
+                    <Button
+                      type="submit"
+                      className="w-full"
                       disabled={createProfileMutation.isPending}
                     >
-                      {createProfileMutation.isPending ? "Creating..." : "Create Profile"}
+                      {createProfileMutation.isPending
+                        ? "Creating..."
+                        : "Create Profile"}
                     </Button>
                   </form>
                 </Form>
@@ -325,16 +416,19 @@ export default function Roommates() {
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="font-semibold mb-2">{userProfile.title}</h3>
-                    <p className="text-gray-600 mb-4">{userProfile.description}</p>
-                    {userProfile.preferences && userProfile.preferences.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {userProfile.preferences.map((pref, index) => (
-                          <Badge key={index} variant="secondary">
-                            {pref}
-                          </Badge>
-                        ))}
-                      </div>
-                    )}
+                    <p className="text-gray-600 mb-4">
+                      {userProfile.description}
+                    </p>
+                    {userProfile.preferences &&
+                      userProfile.preferences.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {userProfile.preferences.map((pref, index) => (
+                            <Badge key={index} variant="secondary">
+                              {pref}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                   </div>
                   <Button variant="outline" size="sm">
                     Edit Profile
@@ -355,8 +449,8 @@ export default function Roommates() {
         ) : filteredProfiles.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProfiles.map((profile) => (
-              <RoommateCard 
-                key={profile.id} 
+              <RoommateCard
+                key={profile.id}
                 profile={profile}
                 onMessage={handleMessage}
               />
@@ -369,10 +463,9 @@ export default function Roommates() {
               {searchQuery ? "No profiles found" : "No roommate profiles yet"}
             </h3>
             <p className="text-gray-600 mb-4">
-              {searchQuery 
-                ? "Try adjusting your search terms" 
-                : "Be the first to create a roommate profile!"
-              }
+              {searchQuery
+                ? "Try adjusting your search terms"
+                : "Be the first to create a roommate profile!"}
             </p>
             {!searchQuery && user && !userProfile && (
               <Button onClick={() => setIsCreateDialogOpen(true)}>
@@ -383,7 +476,7 @@ export default function Roommates() {
           </div>
         )}
       </div>
-      
+
       <Footer />
     </div>
   );

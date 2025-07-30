@@ -1,0 +1,10 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = https://github.com/Ayushkore1404/ClassifiedU.git
+	fetch = +refs/*:refs/*
+	mirror = true
