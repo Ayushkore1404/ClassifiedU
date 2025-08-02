@@ -47,11 +47,12 @@ export default function Roommates() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentPreferences, setCurrentPreferences] = useState<string[]>([]);
   const [newPreference, setNewPreference] = useState("");
 
   const { data: profiles, isLoading: profilesLoading } = useQuery<
-    RoommateProfile[]
+    RoommateWithUser[]
   >({
     queryKey: ["/api/roommates"],
   });
@@ -116,6 +117,34 @@ export default function Roommates() {
     },
   });
 
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data: InsertRoommateProfile & { id: number }) => {
+      const response = await apiRequest("PUT", `/api/roommates/${data.id}`, data);
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/roommates"] });
+      queryClient.invalidateQueries({
+        queryKey: ["/api/users", user?.id, "roommate"],
+      });
+      toast({
+        title: "Success!",
+        description: "Your roommate profile has been updated.",
+      });
+      setIsEditDialogOpen(false);
+      form.reset();
+      setCurrentPreferences([]);
+    },
+    onError: (error: Error) => {
+      console.error("Profile update error:", error);
+      toast({
+        title: "Error Updating Profile",
+        description: "Failed to update profile. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   const handleMessage = () => {
     if (!user) {
       toast({
@@ -144,9 +173,27 @@ export default function Roommates() {
   };
 
   const removePreference = (pref: string) => {
-    const updatedPreferences = currentPreferences.filter((p) => p !== pref);
-    setCurrentPreferences(updatedPreferences);
-    form.setValue("preferences", updatedPreferences);
+    setCurrentPreferences(currentPreferences.filter((p) => p !== pref));
+  };
+
+  const handleEditProfile = () => {
+    if (!userProfile) return;
+    
+    // Populate form with existing data
+    form.reset({
+      title: userProfile.title || "",
+      description: userProfile.description || "",
+      preferences: userProfile.preferences || [],
+      budget: userProfile.budget || undefined,
+      moveInDate: userProfile.moveInDate || "",
+      location: userProfile.location || "",
+      contactInfo: userProfile.contactInfo || "",
+      isActive: userProfile.isActive ?? true,
+    });
+    
+    // Set current preferences for the UI
+    setCurrentPreferences(userProfile.preferences || []);
+    setIsEditDialogOpen(true);
   };
 
   const onSubmit = (data: InsertRoommateProfile) => {
@@ -198,10 +245,20 @@ export default function Roommates() {
       return;
     }
 
-    createProfileMutation.mutate({
-      ...data,
-      userId: user.id,
-    });
+    // Determine if this is an edit or create operation
+    if (isEditDialogOpen && userProfile) {
+      // Update existing profile
+      updateProfileMutation.mutate({
+        ...data,
+        id: Number(userProfile.id),
+      });
+    } else {
+      // Create new profile
+      createProfileMutation.mutate({
+        ...data,
+        userId: user.id,
+      });
+    }
   };
 
   const filteredProfiles =
@@ -267,6 +324,43 @@ export default function Roommates() {
                     onSubmit={form.handleSubmit(onSubmit)}
                     className="space-y-6"
                   >
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Profile Title *</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g., Looking for a clean and quiet roommate"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Tell potential roommates about yourself, your lifestyle, and what you're looking for..."
+                              className="min-h-[100px]"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
                     <div>
                       <label className="block text-sm font-medium mb-2">
                         Preferences
@@ -405,6 +499,198 @@ export default function Roommates() {
               </DialogContent>
             </Dialog>
           )}
+
+          {/* Edit Profile Dialog */}
+          {user && userProfile && (
+            <Dialog
+              open={isEditDialogOpen}
+              onOpenChange={setIsEditDialogOpen}
+            >
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Edit Roommate Profile</DialogTitle>
+                </DialogHeader>
+
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-6"
+                  >
+                    <FormField
+                      control={form.control}
+                      name="title"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Profile Title *</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="e.g., Looking for a clean and quiet roommate"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Tell potential roommates about yourself, your lifestyle, and what you're looking for..."
+                              className="min-h-[100px]"
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        Preferences
+                      </label>
+                      <div className="flex gap-2 mb-2">
+                        <Input
+                          placeholder="Add a preference (e.g., Non-smoker, Clean, Quiet)"
+                          value={newPreference}
+                          onChange={(e) => setNewPreference(e.target.value)}
+                          onKeyPress={(e) =>
+                            e.key === "Enter" &&
+                            (e.preventDefault(), addPreference())
+                          }
+                        />
+                        <Button type="button" onClick={addPreference} size="sm">
+                          Add
+                        </Button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {currentPreferences.map((pref) => (
+                          <Badge
+                            key={pref}
+                            variant="secondary"
+                            className="flex items-center gap-1"
+                          >
+                            {pref}
+                            <X
+                              size={12}
+                              className="cursor-pointer hover:text-red-500"
+                              onClick={() => removePreference(pref)}
+                            />
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="budget"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Budget (per month)</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="800"
+                                {...field}
+                                value={field.value || ""}
+                                onChange={(e) =>
+                                  field.onChange(Number(e.target.value) || null)
+                                }
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="moveInDate"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Move-in Date</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="date"
+                                {...field}
+                                value={field.value || ""}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="location"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Preferred Location</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Near campus, Downtown, etc."
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="contactInfo"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Contact Information *</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="your.email@university.edu"
+                              aria-describedby="contact-description"
+                              required
+                              {...field}
+                              value={field.value || ""}
+                            />
+                          </FormControl>
+                          <p
+                            id="contact-description"
+                            className="text-sm text-gray-500 mt-1"
+                          >
+                            Provide a valid email address for potential
+                            roommates to contact you
+                          </p>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={updateProfileMutation.isPending}
+                    >
+                      {updateProfileMutation.isPending
+                        ? "Updating..."
+                        : "Update Profile"}
+                    </Button>
+                  </form>
+                </Form>
+              </DialogContent>
+            </Dialog>
+          )}
         </div>
 
         {/* Current User's Profile */}
@@ -430,7 +716,7 @@ export default function Roommates() {
                         </div>
                       )}
                   </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={handleEditProfile}>
                     Edit Profile
                   </Button>
                 </div>
@@ -452,6 +738,7 @@ export default function Roommates() {
               <RoommateCard
                 key={profile.id}
                 profile={profile}
+                user={profile.user}
                 onMessage={handleMessage}
               />
             ))}

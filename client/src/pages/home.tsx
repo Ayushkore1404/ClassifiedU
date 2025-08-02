@@ -59,15 +59,17 @@ function StatsSection() {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen">
       <Navbar />
-      <HeroSection />
-      <CategoriesSection />
-      <FeaturedListings />
-      <RoommateFinderSection />
-      <CreateListingCTA />
-      <StatsSection />
-      <Footer />
+      <div className="bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <HeroSection />
+        <CategoriesSection />
+        <FeaturedListings />
+        <RoommateFinderSection />
+        <CreateListingCTA />
+        <StatsSection />
+        <Footer />
+      </div>
     </div>
   );
 }

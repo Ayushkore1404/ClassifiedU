@@ -153,7 +153,8 @@ export default function Sell() {
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="What are you selling?"
+                          placeholder="e.g., Calculus Textbook, MacBook Pro, Study Desk..."
+                          maxLength={100}
                           {...field}
                         />
                       </FormControl>
@@ -170,8 +171,9 @@ export default function Sell() {
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Describe your item in detail..."
-                          className="min-h-[100px]"
+                          placeholder="Describe your item's condition, features, age, reason for selling, etc. Be detailed to attract buyers!"
+                          className="min-h-[120px]"
+                          maxLength={1000}
                           {...field}
                         />
                       </FormControl>
@@ -186,7 +188,7 @@ export default function Sell() {
                     name="price"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Price</FormLabel>
+                        <FormLabel>Price ($)</FormLabel>
                         <FormControl>
                           <div className="relative">
                             <DollarSign
@@ -195,16 +197,15 @@ export default function Sell() {
                             />
                             <Input
                               type="number"
-                              placeholder="0"
+                              placeholder="0.00"
                               min="0"
-                              step="1"
+                              step="0.01"
                               className="pl-10"
                               value={field.value || ""}
                               onChange={(e) => {
                                 const value = e.target.value;
-                                // Convert to integer, handle empty string
                                 field.onChange(
-                                  value === "" ? undefined : parseInt(value, 10)
+                                  value === "" ? undefined : parseFloat(value)
                                 );
                               }}
                             />
@@ -275,50 +276,19 @@ export default function Sell() {
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="price"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <FormControl>
-                        <div className="relative">
-                          <DollarSign
-                            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                            size={16}
-                          />
-                          <Input
-                            type="number"
-                            placeholder="0.00"
-                            min="0"
-                            step="0.01"
-                            className="pl-10"
-                            {...field}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              field.onChange(
-                                value ? parseFloat(value) : undefined
-                              );
-                            }}
-                            value={field.value || ""}
-                          />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+
 
                 <FormField
                   control={form.control}
                   name="university"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>University</FormLabel>
+                      <FormLabel>University/Campus</FormLabel>
                       <FormControl>
                         <Input
                           type="text"
-                          placeholder="Your university"
+                          placeholder="e.g., Harvard University, MIT, Stanford..."
+                          maxLength={100}
                           {...field}
                         />
                       </FormControl>
@@ -331,7 +301,7 @@ export default function Sell() {
                   <label className="block text-sm font-medium mb-2">
                     Photos
                   </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center relative">
                     {imagePreview ? (
                       <div className="space-y-4">
                         <img
@@ -351,25 +321,25 @@ export default function Sell() {
                         </Button>
                       </div>
                     ) : (
-                      <div>
+                      <div className="relative">
                         <Upload
                           className="mx-auto mb-4 text-gray-400"
                           size={48}
                         />
                         <p className="text-gray-600 mb-2">
-                          Click to upload photos
+                          Click to upload a photo of your item
                         </p>
                         <p className="text-sm text-gray-500">
-                          PNG, JPG up to 10MB
+                          PNG, JPG, JPEG up to 10MB • High-quality photos get more views!
                         </p>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
                       </div>
                     )}
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                    />
                   </div>
                 </div>
 

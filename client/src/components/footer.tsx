@@ -1,7 +1,16 @@
+import { useState } from "react";
 import { Link } from "wouter";
 import { GraduationCap } from "lucide-react";
+import ContactModal from "@/components/contact-modal";
 
 export default function Footer() {
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+
+  const handleContactClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsContactModalOpen(true);
+  };
+
   return (
     <footer className="bg-gray-900 text-white py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,7 +59,7 @@ export default function Footer() {
               <li><a href="#" className="hover:text-white">Safety Tips</a></li>
               <li><a href="#" className="hover:text-white">Student Guide</a></li>
               <li><a href="#" className="hover:text-white">Help Center</a></li>
-              <li><a href="#" className="hover:text-white">Contact Us</a></li>
+              <li><a href="#" onClick={handleContactClick} className="hover:text-white cursor-pointer">Contact Us</a></li>
             </ul>
           </div>
         </div>
@@ -59,6 +68,12 @@ export default function Footer() {
           <p>&copy; 2024 ClassifiedU. All rights reserved. | Privacy Policy | Terms of Service</p>
         </div>
       </div>
+
+      {/* Contact Modal */}
+      <ContactModal 
+        isOpen={isContactModalOpen} 
+        onClose={() => setIsContactModalOpen(false)} 
+      />
     </footer>
   );
 }
